@@ -1,4 +1,4 @@
 task :default do
-   sh "ruby popular.rb japmelian 5"
+   sh "ruby twitt.rb"
 end
 
