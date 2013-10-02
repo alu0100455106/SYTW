@@ -1,0 +1,69 @@
+require 'twitter'
+require './configure'
+
+#Por defecto, usa 'timoreilly' si no se le pasan argumentos
+screen_name = ARGV[0] || 'timoreilly'
+
+#Aqui almacena el usuario elegido
+a_user = Twitter.user(screen_name)
+
+
+puts "Username   : #{a_user.screen_name}"
+=begin
+puts "Name       : #{a_user.name}"
+puts "Followers  : #{a_user.followers_count}"
+puts "Friends    : #{a_user.friends_count}"
+puts "Location   : #{a_user.location}"
+puts "URL        : #{a_user.url}" if a_user.url
+puts "Verified   : #{a_user.verified}"
+puts " "
+
+tweet = Twitter.user_timeline(screen_name).first
+
+if tweet
+  puts "Tweet text : #{tweet.text }"
+  puts "Tweet time : #{tweet.created_at}"
+  puts "Tweet ID   : #{tweet.id}"
+end
+=end
+
+#Aqui se almacenan los usuarios
+user = Hash.new 
+
+#Aqui se almacena el numero de usuarios a mostrar. Por ejemplo: 5 = Top5
+top = 5
+
+#Almacena las ids de las personas que sigue el usuario
+friends = Twitter.friend_ids(screen_name)
+
+
+aux = 0 
+#Recorre el hash hasta el valor de 'iteration'
+friends.ids.each do |fid|
+    if (aux < top)  
+    
+      f = Twitter.user(fid)
+      
+      #Introduce el usuario en el hash si su cuenta no esta protegida
+      if (f.protected.to_s != "true")  
+        user[f.screen_name.to_s] = f.followers_count
+         aux += 1
+      end
+   end
+end
+
+
+
+aux2 = 0;
+users = user.sort_by {|k,v| -v}
+
+puts
+puts "Usuario \t Seguidores"
+
+users.each do |user,count|
+	if (aux2 > top)
+		break
+	end
+	puts "#{user}: \t#{count}"
+	aux2 +=1
+end
